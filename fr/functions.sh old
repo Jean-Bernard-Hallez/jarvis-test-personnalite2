@@ -1,0 +1,458 @@
+# /bin/bash
+AZERTYTREZA() {
+# order="à"
+# say "la réponse est $order";
+say "$order"
+}
+
+testpersonnalite2_chemin() {
+testpersonnalite2_chemin_etape="/home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/testpersonnalite2_etape.txt";
+testpersonnalite2_chemin_tot="/home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/testpersonnalite2_tot.txt";
+testpersonnalite2_chemin_noms="/home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/nom/";
+testpersonnalite2_chemin_noms_encours="/home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/testpersonnalite2_nomencours.txt";
+testpersonnalite2_chemin_noms_encoursX="/home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/testpersonnalite2_nomencoursX.txt";
+}
+
+jv_pg_testpersonlalite2() {
+testpersonnalite2_chemin
+
+if [ ! -d $testpersonnalite2_chemin_noms ]; then
+mkdir $testpersonnalite2_chemin_noms
+fi
+
+if test -e $testpersonnalite2_chemin_tot ; then 
+testpersonnalite2_addition=`cat $testpersonnalite2_chemin_tot`
+else
+testpersonnalite2_addition="0"
+echo "A" > $testpersonnalite2_chemin_tot
+fi
+
+if test -e "$testpersonnalite2_chemin_etape"; then
+testpersonnalite2_compteur=`cat $testpersonnalite2_chemin_etape`;
+else
+testpersonnalite2_compteur="A";
+echo "$testpersonnalite2_compteur" > $testpersonnalite2_chemin_etape;
+fi
+
+if [[ "$testpersonnalite2_chemin_nom" == "" && "$testpersonnalite2_compteur" -gt "1" ]]; then
+testpersonnalite2_chemin_nom=`cat $testpersonnalite2_chemin_tot | sed  -e "s/_/ /g"`
+say "Jarvis est relancée... si c'est pas $testpersonnalite2_chemin_nom ?"
+say "dites on recommence pour repartir à zéro..."
+	testpersonnalite2_compteur=`cat $testpersonnalite2_chemin_noms_encours | tail -1 | cut -c1-2`
+	if [[ "$testpersonnalite2_compteur" =~ ":" ]]; then 
+	testpersonnalite2_compteur=`cat $testpersonnalite2_chemin_noms_encours | tail -1 | cut -c1`
+	fi
+
+fi
+
+if [[ "$testpersonnalite2_compteur" == "A" ]]; then 
+say "Vous allez remplir une série de 10 questions."
+say "Mais avant... Quel est votre prénom et votre nom ?";
+echo "B" > $testpersonnalite2_chemin_etape
+return;
+fi
+
+if [[ "$order" =~ "commence" ]]; then 
+say "Ok on repart à zéro..."
+testpersonlalite2_reset;
+jv_pg_testpersonlalite2;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "" ]]; then
+	testpersonnalite2_compteur=`cat $testpersonnalite2_chemin_noms_encours | tail -1 | cut -c1-2`
+	if [[ "$testpersonnalite2_compteur" =~ ":" ]]; then 
+	testpersonnalite2_compteur=`cat $testpersonnalite2_chemin_noms_encours | tail -1 | cut -c1`
+	fi
+fi
+
+if [[ "$order" =~ "répèt" ]]; then 
+order=""
+testpersonnalite2_compteur=$(( $testpersonnalite2_compteur - 1 )); 
+echo $testpersonnalite2_compteur > $testpersonnalite2_chemin_etape; 
+jv_pg_testpersonlalite2;
+return; 
+fi
+
+
+if [[ "$testpersonnalite2_ok" == "ok" ]]; then testpersonnalite2_boucle else return; fi
+
+if [[ "$testpersonnalite2_compteur" == "B" ]]; then 
+testpersonnalite2_chemin_nom=`echo "$order" | sed -e "s/c'est//g" | sed -e "s/mon//g" | sed -e "s/nom//g" | sed -e "s/est//g"`
+testpersonnalite2_chemin_nom1=`echo "$testpersonnalite2_chemin_nom" | sed -e "s/ /_/g"`
+say "Ok $testpersonnalite2_chemin_nom,"
+echo $testpersonnalite2_chemin_nom1 > $testpersonnalite2_chemin_tot
+echo "$testpersonnalite2_chemin_nom" > $testpersonnalite2_chemin_noms_encours
+echo "Test Pesonnalité numéro 2 de: $order," > $testpersonnalite2_chemin_noms_encours;
+say "A tout moment vous pouvez dire répète... OK ?"
+testpersonnalite2_compteur="0"
+testpersonnalite2_boucle;
+return;
+fi
+
+echo "----------$testpersonnalite2_compteur------------"
+if [[ `cat $testpersonnalite2_chemin_noms_encours | grep "$testpersonnalite2_compteur:" | wc -l` -gt "1" ]]; then
+echo "efface les lignes contenant le numéro du compteur";
+sed '$d' -i  $testpersonnalite2_chemin_noms_encours;
+sed '$d' -i  $testpersonnalite2_chemin_noms_encours;
+order="répète";
+jv_pg_testpersonlalite2;
+return;
+fi
+
+
+if [[ "$testpersonnalite2_compteur" == "1" ]]; then 
+say "Question 1: Vous marchez dans un boisé. Vous n'êtes pas seul. Qui est à vos côtés ?";
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "2" ]]; then 
+echo "1: La plus importante dans votre vie: $order," >>  $testpersonnalite2_chemin_noms_encours
+say "Question 2: Vous continuez votre marche. Vous apercevez un animal. De quel animal s'agit-il ?";
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "3" ]]; then 
+echo "2: taille de vos problèmes: $order," >> $testpersonnalite2_chemin_noms_encours;
+say "Question 3: Décrivez l'interaction que vous avez entre vous,  et cet animal ? (passive, agressive) ?";
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "4" ]]; then 
+echo "3: faire face à vos problèmes: $order," >> $testpersonnalite2_chemin_noms_encours;
+say "Question 4: Vous continuez à marcher et vous vous retrouvez dans une clairière au milieu de laquelle se trouve votre maison de rêve. De quelle grandeur est cette maison ?";
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "5" ]]; then 
+echo "4: désir de régler vos problèmes: $order," >> $testpersonnalite2_chemin_noms_encours;
+say "Question 5: Votre maison de rêve est-elle entourée d'une clôture ?";
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "6" ]]; then
+	if [[ "$order" =~ "non" ]]; then 
+	echo "5: il n'y a pas de clôture, vous êtes extroverti. Les visiteurs sont bienvenus en tout temps." >> $testpersonnalite2_chemin_noms_encours;
+	else
+	echo "5: La présence d'une clôture indique une personnalité introvertie. Vous préférez inviter les gens que de les voir arriver sans invitation." >>  $testpersonnalite2_chemin_noms_encours;
+	fi
+say "Question 6: Vous pénétrez à l'intérieur de la maison. Vous apercevez la salle à manger et la table."
+say "Décrivez ce que vous voyez sur celle ci, et ce qu'il y a autour de la table ?";
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "7" ]]; then 
+if [[ "$order" =~ "fleur" || "$order" =~ "nourriture" || "$order" =~ "person" || "$order" =~ "gens" || "$order" =~ "monde" ]]; then
+# echo "6: Si votre réponse n'inclut pas des fleurs, de la nourriture et des personnes, vous êtes généralement triste. : $order," >>  $testpersonnalite2_chemin_noms_encours;
+echo "6: Vous êtes généralement heureux." >> $testpersonnalite2_chemin_noms_encours;
+else
+echo "6: Vous êtes généralement triste." >>$testpersonnalite2_chemin_noms_encours;
+fi
+say "Question 7:Vous quittez la maison par la porte arrière. Vous trouvez une tasse par terre. De quoi est faite cette tasse ?";
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "8" ]]; then 
+# echo "7: Le matériau de la tasse est représentatif de la durabilité de votre relation avec la personne que vous avez nommée à la question 1."
+# say "Par exemple le plastique et le papier sont périssables"
+# say "tandis que la porcelaine et la métal sont durables." 
+testpersonnalite2_reponseQ1=`cat $testpersonnalite2_chemin_noms_encours | sed -n 2p | cut -d":" -f3-`
+
+if [[ "$order" =~ "plastique" || "$order" =~ "papier" ]]; then 
+echo "7: la durabilité de votre relation avec $testpersonnalite2_reponseQ1 est périssable " >> $testpersonnalite2_chemin_noms_encours; fi
+if [[ "$order" =~ "porcelaine" || "$order" =~ "métal"  || "$order" =~ "verre" ]]; then 
+echo "7: la durabilité de votre relation avec $testpersonnalite2_reponseQ1 est durable " >> $testpersonnalite2_chemin_noms_encours;
+fi
+
+say "Question 8: Que faites-vous de cette tasse ?";
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "9" ]]; then 
+echo "8: Ce que vous faites avec la tasse représente votre attitude envers $testpersonnalite2_reponseQ1: $order," >> $testpersonnalite2_chemin_noms_encours;
+say "Question 9: Vous marchez jusqu'aux abords de la propriété et vous vous trouvez face à un plan d'eau. Quelle est l'étendue du plan d'eau rivière, ruisseau, lac. ?";
+testpersonnalite2_boucle;
+return;
+fi
+if [[ "$testpersonnalite2_compteur" == "10" ]]; then 
+echo "9: L'étendue du plan d'eau est proportionnelle à votre libido: $order," >> $testpersonnalite2_chemin_noms_encours;
+say "Question 10: Comment traverserez vous ce plan d'eau ?";
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "11" ]]; then
+echo "10: Le degré avec le quel vous vous mouillez pour traverser le plan d'eau est représentatif de l'importance de la sexualité dans votre vie: $order," >> $testpersonnalite2_chemin_noms_encours;
+say "Voilà c'est finit, je vais vous dévoiler le résultat question par question, dites ok chaque réponde entendu pour poursuivre. ok ?"
+testpersonnalite2_chemin_nom1=`cat $testpersonnalite2_chemin_tot`
+cat $testpersonnalite2_chemin_noms_encours > $testpersonnalite2_chemin_noms$testpersonnalite2_chemin_nom1.txt
+testpersonnalite2_boucle;
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "12" ]]; then 
+# Réponse 1
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 2p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+testpersonnalite2_ok="ok"
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "13" ]]; then 
+# Réponse 2
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 3p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+# Réponse 3
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 4p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+# Réponse 4
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 5p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+testpersonnalite2_ok="ok"
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "14" ]]; then 
+# Réponse 5
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 6p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+testpersonnalite2_ok="ok"
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "15" ]]; then 
+# Réponse 6
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 7p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+testpersonnalite2_ok="ok"
+return;
+fi
+
+if [[ "$testpersonnalite2_compteur" == "16" ]]; then 
+# Réponse 7
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 8p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+# Réponse 8
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 9p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+testpersonnalite2_ok="ok"
+return;
+fi
+
+
+if [[ "$testpersonnalite2_compteur" == "17" ]]; then 
+# Réponse 9
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 10p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+# Réponse 10
+testpersonnalite2_reponse=`cat $testpersonnalite2_chemin_noms_encours | sed -n 11p | cut -d":" -f2-`
+say "$testpersonnalite2_reponse"
+say "Voilà c'est fini..."
+GOTOSORTIPESRONNALITE2="FIN"
+testpersonnalite2_ok=""
+testpersonnalite2_boucle;
+return;
+fi
+
+
+}
+
+
+testpersonnalite2_ok() {
+if [[ "$order" =~ "ok" ]]; then 
+return
+fi
+}
+
+
+testpersonnalite2_boucle() {
+testpersonnalite2_compteur=`cat $testpersonnalite2_chemin_noms_encours | tail -1 | cut -c1-2`
+if [[ "$testpersonnalite2_compteur" =~ ":" ]]; then 
+testpersonnalite2_compteur=`cat $testpersonnalite2_chemin_noms_encours | tail -1 | cut -c1`
+fi
+testpersonnalite2_compteur=$(( $testpersonnalite2_compteur + 1 ));
+echo "$testpersonnalite2_compteur" > $testpersonnalite2_chemin_etape;
+# echo "compteur=$testpersonnalite2_compteur"
+}
+
+
+
+testpersonlalite2_reset() {
+testpersonnalite2_chemin
+testpersonnalite2_addition=""
+testpersonnalite2_compteur=""
+
+if test -e $testpersonnalite2_chemin_etape; then
+sudo rm $testpersonnalite2_chemin_etape
+fi
+
+if test -e  $testpersonnalite2_chemin_tot; then
+sudo rm $testpersonnalite2_chemin_tot
+fi
+
+if test -e $testpersonnalite2_chemin_noms_encours; then
+sudo rm $testpersonnalite2_chemin_noms_encours
+fi
+
+if test -e $testpersonnalite2_chemin_noms_encoursX; then
+sudo rm $testpersonnalite2_chemin_noms_encoursX
+fi
+}
+
+jv_pg_testpersonnalite2_rappel() {
+testpersonnalite2_chemin
+testpersonnalite2_rappel_recherche=`echo "$1_$2_$3" | sed "s/.$//"`;
+echo "1-------"
+jv_pg_testpersonnalite2_rappel_suite;
+
+if [[ `echo $testpersonnalite2_rappel_recherche_ilya | grep " " | wc -w` == "0" ]]; then
+testpersonnalite2_rappel_recherche="$1_$2";
+echo "2-------"
+jv_pg_testpersonnalite2_rappel_suite;
+fi
+
+if [[ `echo $testpersonnalite2_rappel_recherche_ilya | grep " " | wc -w` == "0" ]]; then
+testpersonnalite2_rappel_recherche="$1";
+echo "3-------"
+jv_pg_testpersonnalite2_rappel_suite;
+fi
+
+if [[ `echo $testpersonnalite2_rappel_recherche_ilya | grep " " | wc -w` == "1" ]]; then
+echo "4-------"
+testpersonnalite2_rappel_recherche_ilya1=`cat $testpersonnalite2_rappel_recherche_ilya |sed -n 1p`
+say "J'ai trouvé $testpersonnalite2_rappel_recherche_ilya1 ?"
+testpersonnalite2_reponse_resultat_final;
+GOTOSORTIPESRONNALITE="FIN"
+return;
+fi
+
+if [[ `echo $testpersonnalite2_rappel_recherche_ilya | grep " " | wc -w` -gt "1" ]]; then
+echo "5-------"
+say "il y a plusieurs nom similaire veuillez préciser car j'ai "
+echo "$testpersonnalite2_rappel_recherche_ilya" > $testpersonnalite2_chemin_noms_encoursX
+
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -e "s/.txt//g" | sed -e "s/_/ /g" | sed -n 1p`
+if [[ "$testpersonnalite2_rappel_recherche_ilya" != "" ]]; then echo "A: $testpersonnalite2_rappel_recherche_ilya"; fi
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -e "s/.txt//g" | sed -e "s/_/ /g" | sed -n 2p`
+if [[ "$testpersonnalite2_rappel_recherche_ilya" != "" ]]; then echo "B: $testpersonnalite2_rappel_recherche_ilya"; fi
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -e "s/.txt//g" | sed -e "s/_/ /g" | sed -n 3p`
+if [[ "$testpersonnalite2_rappel_recherche_ilya" != "" ]]; then echo "C: $testpersonnalite2_rappel_recherche_ilya"; fi
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -e "s/.txt//g" | sed -e "s/_/ /g" | sed -n 4p`
+if [[ "$testpersonnalite2_rappel_recherche_ilya" != "" ]]; then echo "D: $testpersonnalite2_rappel_recherche_ilya"; fi
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -e "s/.txt//g" | sed -e "s/_/ /g" | sed -n 5p`
+if [[ "$testpersonnalite2_rappel_recherche_ilya" != "" ]]; then echo "E: $testpersonnalite2_rappel_recherche_ilya"; fi
+return; 
+fi
+
+echo "6-------"
+testpersonnalite2_addition=`cat $testpersonnalite2_rappel_recherche_ilya | sed -n 2p | sed -e "s/Point total = //g"`
+# say "Avec ses $testpersonnalite2_chemin_tot points il a obtenu:"
+
+GOTOSORTIPESRONNALITE="FIN"
+}
+
+jv_pg_testpersonnalite2_rappel_suite() {
+testpersonnalite2_chemin_noms="/home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/nom/";
+testpersonnalite2_rappel_recherche_ilya=`find $testpersonnalite2_chemin_noms -name "$testpersonnalite2_rappel_recherche*.txt" | sed -e "s/\/.*\///g"`
+# echo "$testpersonnalite2_rappel_recherche_ilya"
+}
+
+jv_pg_testpersonnalite2_rappel_suite_A() {
+testpersonnalite2_chemin_noms="/home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/nom/";
+testpersonnalite2_chemin_noms_encoursX="/home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/testpersonnalite2_nomencoursX.txt";
+order=`echo $order | sed -e "s/à/a/g" | sed -e "s/réponse//g" | sed -e "s/numéro//g"  | sed -e "s/est//g"`
+
+if [[ "$order" =~ "a" ]]; then 
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -n 1p`
+fi
+
+if [[ "$order" =~ "b" ]]; then 
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -n 2p`
+fi
+
+if [[ "$order" =~ "c" ]]; then 
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -n 3p`
+fi
+
+if [[ "$order" =~ "d" ]]; then 
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -n 4p`
+fi
+
+if [[ "$order" =~ "e" ]]; then 
+testpersonnalite2_rappel_recherche_ilya=`cat $testpersonnalite2_chemin_noms_encoursX | sed -n 5p`
+fi
+
+testpersonnalite2_addition=`cat $testpersonnalite2_chemin_noms/$testpersonnalite2_rappel_recherche_ilya | sed -n 2p | sed -e "s/Point total = //g"`
+say "Résultat avec:"
+testpersonnalite2_reponse_resultat_final;
+GOTOSORTIPESRONNALITE="FIN"
+return; 
+}
+
+jv_pg_testpersonnalite2_qui() {
+testpersonnalite2_chemin
+testpersonnalite2_rappel_recherche_ilya=`find $testpersonnalite2_chemin_noms -name "*.txt"`
+testpersonnalite2_rappel_recherche_ilya_total=`ls /home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/nom/ | wc -l`
+say "il y a $testpersonnalite2_rappel_recherche_ilya_total qui ont passé le test:"
+testpersonnalite2_rappel_recherche_ilya_tot="1"
+echo "" > $testpersonnalite2_chemin_noms_encoursX
+jv_pg_testpersonnalite2_qui_suite
+}
+
+jv_pg_testpersonnalite2_qui_suite() {
+if [[ "$testpersonnalite2_rappel_recherche_ilya_tot" -le  "$testpersonnalite2_rappel_recherche_ilya_total" ]]; then 
+adire_cat_testpersonnalite2=$(cat `find $testpersonnalite2_chemin_noms -name "*.txt" | sed -n $testpersonnalite2_rappel_recherche_ilya_tot\p` | sed -n 1p)
+adire_cat_testpersonnalite2_cat=`echo $testpersonnalite2_chemin_noms -name "*.txt" | sed -n $testpersonnalite2_rappel_recherche_ilya_tot\p`
+# echo "$testpersonnalite2_rappel_recherche_ilya_tot $adire_cat_testpersonnalite2_cat, " >> $testpersonnalite2_chemin_noms_encoursX
+echo "$testpersonnalite2_rappel_recherche_ilya_tot $(find $testpersonnalite2_chemin_noms -name "*.txt" | sed -n $testpersonnalite2_rappel_recherche_ilya_tot\p)" >> $testpersonnalite2_chemin_noms_encoursX
+
+say "$testpersonnalite2_rappel_recherche_ilya_tot: $adire_cat_testpersonnalite2" 
+testpersonnalite2_rappel_recherche_ilya_tot=$(( $testpersonnalite2_rappel_recherche_ilya_tot + 1 ))
+jv_pg_testpersonnalite2_qui_suite
+fi
+}
+
+jv_pg_testpersonnalite2_efface() {
+testpersonnalite2_chemin
+testpersonnalite2_rappel_recherche_ilya=`find $testpersonnalite2_chemin_noms -name "*.txt"`
+testpersonnalite2_rappel_recherche_ilya_total=`ls /home/pi/jarvis/plugins_installed/jarvis-test-personnalite2/nom/ | wc -l`
+say "Qui voulez vous effacer parmit les $testpersonnalite2_rappel_recherche_ilya_total qui ont passé le test:"
+testpersonnalite2_rappel_recherche_ilya_tot="1"
+jv_pg_testpersonnalite2_qui_suite
+say "ou tout le répertoire ?"
+
+}
+
+jv_pg_testpersonnalite2_efface_suite() {
+testpersonnalite2_chemin
+if [[ "$order" =~ "tou" ]]; then 
+sudo rm `echo $testpersonnalite2_chemin_noms*.txt`
+say "Voilà... Le répetoire est vide..."
+return
+fi
+
+testpersonnalite2_corrigeorder
+sudo rm `cat $testpersonnalite2_chemin_noms_encoursX | grep "$order" | cut -d" " -f2 | sed -n 1p`
+say "Voilà...c'est supprimé"
+}
+
+testpersonnalite2_corrigeorder() {
+if [[ "$order" =~ "un" ]]; then order="1"; fi
+if [[ "$order" =~ "deux" ]]; then order="2"; fi
+if [[ "$order" =~ "trois" ]]; then order="3"; fi
+if [[ "$order" =~ "quatre" ]]; then order="4"; fi
+if [[ "$order" =~ "cinq" ]]; then order="5"; fi
+if [[ "$order" =~ "six" ]]; then order="6"; fi
+if [[ "$order" =~ "sept" ]]; then order="7"; fi
+if [[ "$order" =~ "huit" ]]; then order="8"; fi
+if [[ "$order" =~ "neuf" ]]; then order="9"; fi
+}
+
